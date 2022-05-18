@@ -1,0 +1,21 @@
+;********************************************************************
+;* Sheet_ga.ff is a simplified constituent of General AMBER         *
+;* Force Field (GAFF), originaly written by Wang J et al. in        *
+;* "Development and testing of a general Amber force field",        *
+;* J Comput Chem 2004. Sheet_ga.ff includes parameters for          *
+;* carbon-based molecules made of C, H and O only. The forcefield   *
+;* was designed and tested for usage with CarbGen tool,             *
+;* and therefore the developers do not take responsability          *
+;* on possible error introduced. For related material and updates   *
+;* please visit carbgen.web.ua.pt                                   *
+;********************************************************************
+
+
+[ defaults ]
+; nbfunc        comb-rule       gen-pairs       fudgeLJ fudgeQQ
+1               2               yes             0.5     0.8333
+
+#include "ffnonbonded.itp"
+#include "ffbonded.itp"
+
+

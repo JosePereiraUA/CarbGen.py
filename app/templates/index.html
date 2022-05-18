@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <title>CarbGen Tool</title>
+    <style>
+        .navbar {
+            border-bottom: 1px solid #61BAAD;
+            /* box-shadow: 0 0 10px 0px gray; */
+        }
+
+        main {
+            height: 100%;
+            padding-top: 100px;
+            padding-bottom: 100px;
+        }
+
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+
+        body {
+            font-weight: 300;
+            font-family: 'Open Sans', sans-serif;
+        }
+        
+        .footer {
+            background-color: #61BAAD;
+            color: white;
+            
+            /* position: absolute; */
+            width: 100%;
+            bottom: 0;
+
+            font-weight: 300;
+            font-size: 12px;
+            line-height: 64px;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        legend {
+            margin-bottom: 0;
+                /* color: #4B8178; */
+                color: #61BAAD;
+        }
+
+        .tip {
+            border-left: 2px solid #61BAAD;
+        }
+
+        .badge-tip {
+            background-color: #61BAAD;
+        }
+
+        .carousel-control-prev-icon {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%2361BAAD' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E")
+        }
+
+        .carousel-control-next-icon {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%2361BAAD' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E")
+        }
+
+        .carousel-indicators li {
+            background-color: rgba(97, 186, 173, 0.5);
+        }
+
+        .carousel-indicators .active {
+            background-color: #61BAAD;
+        }
+
+        .carousel-caption {
+            color: #61BAAD;
+            position: relative;
+            left: auto;
+            right: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Fixed navbar -->
+        <!-- <nav class="navbar navbar-expand-md navbar-light fixed-top bg-white container"> -->
+        <nav class="navbar navbar-expand-md navbar-light fixed-top bg-white">
+            <a href="http://sweet.ua.pt/sergio.santos">
+                <img alt="Brand" src="{{url_for('static', filename='carbgen.svg')}}" class="navbar-left" height="52px" width="52px">
+            </a>
+            <a class="navbar-brand ml-auto" href="#" style="color:#61BAAD; font-size: 0;">
+                <!-- <h2 style="color:#61BAAD; font-size: 0;"> -->
+                    <span class="font-weight-light" style="font-size: 32px;">Carb</span>
+                    <span class="font-weight-bold" style="font-size: 32px;">Gen</span>
+                <!-- </h2> -->
+            </a>
+            <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button> -->
+    
+        </nav>
+    </header>
+
+    <!-- https://getbootstrap.com/docs/4.0/components/forms/ -->
+    <main role="main" class="container">
+        <h1 style="color: #61BAAD;"><span style="color:#61BAAD;">
+            <span class="font-weight-light">Carb</span><span class="font-weight-bold">Gen </span>
+        </span></h1>
+        <br>
+        <p>
+            Molecular modelling of carbon based materials has shown promising results in the search for molecular mechanisms of various interactions.
+            One of the challenges of creating these models is the correct incorporation of functional groups in a quantitative fashion, with proper definition of atom types and charges in topology files.
+            <span style="color:#61BAAD; font-size: 0;">
+                <span class="font-weight-light" style="font-size: initial;">Carb</span>
+                <span class="font-weight-bold" style="font-size: initial;">GEN </span>
+            </span>
+            is a new computational tool, allowing free and easy design of functionalized carbon materials with complex microporosity detail.
+        </p>
+        <p>For more details, please consult the associated <a href="http://doi.org" style="color: #61BAAD">reference</a>.</p>
+        
+        <div class="row mt-5">
+            <!-- Input Column -->
+            <div class="col-md-6">
+                <form id="generate-form" class="form needs-validation" action="{{ url_for('generate') }}" method="post" novalidate>
+                    
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                    <fieldset class="form-group">
+                        <legend>Functionalizations</legend>
+                        <div class="form-group">
+                            <small class="text-muted">The amount of each functionalization type attached to carbon atoms, given as percentage</small>
+                        </div>
+                        
+                        <div class="form-group row">
+
+                            <!-- CARBONYLS -->
+                            <div class="col">
+                                <label for="co" class="col-form-label col-form-label-sm text-sm-right">Carbonyls</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" id="co" min=0 max=100 name="co" value="0" data-toggle="tooltip" placeholder="ex: 9" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please choose a value in range 0% to 100%
+                                    </div>
+                                </div>
+                                <!-- <small class="text-muted">percentage (<span class="font-italic">n/n</span>) of carbonyl groups</small> -->
+                            </div>
+                        
+                            <!-- CARBOXYLS -->
+                            <div class="col">
+                                <label for="coo" class="col-form-label col-form-label-sm text-sm-right">Carboxyls</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" id="coo" min=0 max=20 name="coo" value="0" data-toggle="tooltip" placeholder="ex: 3" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please choose a value in range 0% to 20%
+                                    </div>
+                                </div>
+                                <!-- <small class="text-muted">percentage (<span class="font-italic">n/n</span>) of carboxylic groups</small> -->
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <!-- ETHERS -->
+                            <div class="col">
+                                <label for="ror" class="col-form-label col-form-label-sm text-sm-right">Ethers</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" id="ror" min=0 max=100 name="ror" value="0" data-toggle="tooltip" placeholder="ex: 8" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please choose a value in range 0% to 100%
+                                    </div>
+                                </div>
+                                <!-- <small class="text-muted">percentage (<span class="font-italic">n/n</span>) of ether groups</small> -->
+                            </div>
+
+                            <!-- H-TERMINI -->
+                            <div class="col">
+                                <label for="ch" class="col-form-label col-form-label-sm text-sm-right">H-termini</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" id="ch" min=0 max=100 name="ch" value="0" data-toggle="tooltip" placeholder="ex: 5" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please choose a value in range 0% to 100%
+                                    </div>
+                                </div>
+                                <!-- <small class="text-muted">percentage (<span class="font-italic">n/n</span>) of hydrogen termini</small> -->
+                            </div>
+                        </div>
+
+                    </fieldset>
+
+
+                    <fieldset class="form-group">
+                    <legend>Residue size</legend>
+                    <!-- <div class="form-group">
+                        <small class="text-muted">The amount of each functionalization type attached to carbon atoms</small>
+                    </div> -->
+
+                    <!-- SIZE -->
+                    <div class="form-group row">
+                        <div class="col">
+                            <label for="x" class="col-form-label col-form-label-sm text-sm-right">Size</label>
+                            <div class="input-group input-group-sm">
+                                <input type="number" class="form-control" id="x" value="10" min="1" max="25" name="x" data-toggle="tooltip" placeholder="along x" required>
+                                <input type="number" class="form-control" id="y" value="10" min="1" max="25" name="y" data-toggle="tooltip" placeholder="along y" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">rings</span>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Please choose a value in range 1 to 25
+                                </div>
+                            </div>
+                            <small class="text-muted">number of rings in the x and y directions (Max: 25)</small>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <!-- N_LAYERS -->
+                        <div class="col">
+                            <label for="z" class="col-form-label col-form-label-sm text-sm-right">Layers</label>
+                            <div class="input-group input-group-sm">
+                                <input type="number" class="form-control" id="z" value="1" min="1" max="5" name="z" data-toggle="tooltip" placeholder="ex: 3" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">layers</span>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Please choose a value in range 1 to 5
+                                </div>
+                            </div>
+                            <small class="text-muted">number of layers (Max: 5)</small>
+                        </div>
+                    
+                        <!-- POROSITY -->
+                        <div class="col">
+                            <label for="pf" class="col-form-label col-form-label-sm text-sm-right">Porosity</label>
+                            <div class="input-group input-group-sm">
+                                <input type="number" class="form-control" id="pf" value="0" min="0" max="10" name="pf" data-toggle="tooltip" placeholder="ex: 5" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">level</span>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Please choose a value in range 0 to 10
+                                </div>
+                            </div>
+                                <small class="text-muted">microporosity level (From 0 to 10)</small>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="form-group">
+                    <legend>Output</legend>
+                    <div class="row" style="margin-top:10px">
+                        <div class="col">
+                            <div class="col tip">
+                                <span class="badge badge-tip">TIP !</span>
+                                <small class="text-muted">Consider using multiple replicas,
+                                    convert the <code>.top</code> files to <code>.itp</code> and insert
+                                    them into a single simulation box.
+                                </small>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class ="row" style="align-items:center">
+                        <div class="form-group col-sm-3">
+                            <label for="batch_size" class="col-form-label col-form-label-sm text-sm-right">Replicas</label>
+                            <div class="input-group input-group-sm">
+                                <input type="number" class="form-control" id="batch_size" min=1 max=5 name="batch_size" value="1" data-toggle="tooltip"
+                                    placeholder="ex: 5">
+                            </div>
+                            <small class="text-muted">(Max: 5)</small>
+                        </div>
+                        <div class="form-group offset-sm-3 col-sm-6">
+                            <!-- <label for="batch_size" class="col-form-label col-form-label-sm text-sm-right"> </label> -->
+                            <div class="input-group input-group-sm">
+                                    <button id="submit-button" type="submit" class="btn btn-outline-primary btn-block btn-sm">Generate</button>
+                                <!-- <input type="number" class="form-control" id="batch_size" min=1 max=5 name="batch_size" value="1" data-toggle="tooltip" -->
+                                    <!-- placeholder="ex: 5"> -->
+                            </div>
+                        </div>
+
+                        <!-- <div class="col-md-7">
+                            <button id="submit-button" type="submit" class="btn btn-outline-primary btn-small">Generate</button>
+                        </div> -->
+                    </div>
+                    <!-- </div> -->
+                    </fieldset>
+
+                    
+
+
+                </form>
+            </div>
+
+
+
+
+            <div class="col-md-6">
+                <legend class="text-right">Examples</legend>
+                <div class="form-group text-right">
+                    <small class="text-muted">Cycle through different examples. Try to rotate the carbon model for a better view!</small>
+                </div>
+                <!-- <div id="canvas-container">
+                    <canvas id="canvas-viewer">
+                        Your browser doesn't support HTML5 canvas.
+                    </canvas>
+                </div> -->
+
+                <div id="examples" class="carousel slide" data-ride="carousel" data-interval="false">
+                    <ol class="carousel-indicators">
+                        <li data-target="#examples" data-slide-to="0"></li>
+                        <li data-target="#examples" data-slide-to="1" class="active"></li>
+                        <li data-target="#examples" data-slide-to="2"></li>
+                    </ol>
+                    <div class="carousel-inner">
+                        <div id="canvas-container-0" class="carousel-item">
+                            <canvas id="canvas-viewer-0">
+                                Your browser doesn't support HTML5 canvas.
+                            </canvas>
+                            <div class="carousel-caption">
+                                <p id="caption-1">Teste1</p>
+                            </div>
+                        </div>
+                        <div id="canvas-container-1" class="carousel-item active">
+                            <canvas id="canvas-viewer-1">
+                                Your browser doesn't support HTML5 canvas.
+                            </canvas>
+                            <div class="carousel-caption">
+                                <p id="caption-2">Teste2</p>
+                            </div>
+                        </div>
+                        <div id="canvas-container-2" class="carousel-item">
+                            <canvas id="canvas-viewer-2">
+                                Your browser doesn't support HTML5 canvas.
+                            </canvas>
+                            <div class="carousel-caption">
+                                <p id="caption-3">Teste3</p>
+                            </div>
+                        </div>
+                            
+                    </div>
+                    <a class="carousel-control-prev" href="#examples" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#examples" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+                <div class="row">
+                    <div class="col"><div class="row">
+
+                        <div class="col-md-10 tip">
+                            <span class="badge badge-tip">TIP !</span>
+                            <small class="text-muted">Hit copy to reuse the parameters used to create this example</small>
+                        </div>
+                        <div class="col-md-2">
+                            <button id="copy-btn" class="btn btn-outline-secondary btn-block btn-sm" type="button">Copy</button>
+                        </div>
+                    </div></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-2">
+                    <a href="http://sweet.ua.pt/sergio.santos">
+                        <img alt="Brand" src="{{url_for('static', filename='myLogo.svg')}}" height="64px" width="64px">
+                    </a>
+                    <!-- <small class="d-block mb-3 text-muted">&copy; 2018</small> -->
+                    <!-- <small>&copy; 2018</small> -->
+                </div>
+                <!-- </div>
+                <div class="row"> -->
+                <div class="col-sm-8">
+                    <p class="text-center">Universidade de Aveiro, Portugal | Sérgio M. Santos &amp; José Pereira &copy; 2018</p>
+                    <!-- <small>&copy; 2018</small> -->
+                </div>
+                <div class="col-sm-2">
+                    <p class="text-right">
+                        <a href="http://www.ciceco.ua.pt">
+                            <img alt="Brand" src="{{url_for('static', filename='ua.svg')}}" height="32px" width="32px">
+                        </a>
+                    </p>
+                    <!-- <span class="align-middle">middle</span> -->
+                </div>
+            </div>
+            <!-- <div class="row">
+                <div class="col" style="line-height: initial;">
+                    <p class="text-center">
+                        <small>
+                            Universidade de Aveiro, Portugal
+                        </small>
+                    </p>
+                </div>
+            </div> -->
+        </div>
+    </footer>
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
+    <script src="{{url_for('static', filename='jquery.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="{{url_for('static', filename='ChemDoodleWeb.js')}}"></script>
+    <script src="{{url_for('static', filename='md.js')}}"></script>
+    <script>
+
+        // var csrf_token = "{{ csrf_token() }}";
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
+                }
+            }
+        });
+        
+        (function () {
+            'use strict';
+
+            function pool_state(btn, job) {
+                var dt = 2000;
+
+                function download_result() {
+                    // var prm = '?job=' + job + '&token=' + csrf_token;
+                    window.location="{{ url_for('download_result') }}" + '?job=' + job;
+                    btn.html('Generate');
+                    btn.prop('disabled', false);
+                }
+
+                function pool_result() {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url_for('pool_result') }}",
+                        data: "job=" + job,
+                        success: function(data) {
+                            console.log(data);
+                            if (data.completed) {
+                                download_result();
+                            } else {
+                                setTimeout(pool_result, dt);
+                            }
+                        }
+                    });
+                }
+                pool_result();
+                
+            }
+
+
+
+
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault();
+                        if (form.checkValidity() === false) {
+                            event.stopPropagation();
+                        }
+                        else {
+                            // console.log($(form).serialize());
+                            $.ajax({
+                                type: "POST",
+                                url: "{{ url_for('generate') }}",
+                                data: $(form).serialize(), // serializes the form's elements.
+                                success: function (data) {
+                                    var btn = $('#submit-button');
+                                    btn.html('processing <i class="fa fa-spinner fa-spin"></i>');
+                                    btn.prop('disabled', true);
+                                    pool_state(btn, data.job);
+                                },
+                                error: function(data) {
+                                    console.error(data);
+                                }
+                            });
+                            
+                            //event.preventDefault()
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</body>
+</html>
+
